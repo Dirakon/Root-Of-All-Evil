@@ -1,0 +1,121 @@
+[gd_scene load_steps=8 format=3 uid="uid://qh8so4kgcd1t"]
+
+[ext_resource type="Script" path="res://Hero.cs" id="1_e8fla"]
+[ext_resource type="Texture2D" uid="uid://d2n16xb8k5l3s" path="res://icon.svg" id="1_lwc83"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_32tch"]
+radius = 75.0267
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4xqoi"]
+size = Vector2(124, 122)
+
+[sub_resource type="Animation" id="Animation_vhj6r"]
+resource_name = "Attack"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.9),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.9),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, -1.5708]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sword/CollisionShape2D:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.9),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+
+[sub_resource type="Animation" id="Animation_wqbws"]
+resource_name = "None"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sword/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_fr753"]
+_data = {
+"Attack": SubResource("Animation_vhj6r"),
+"None": SubResource("Animation_wqbws")
+}
+
+[node name="Hero" type="CharacterBody2D"]
+script = ExtResource("1_e8fla")
+Health = 10.0
+knockBackToDampFactor = 0.95
+Speed = 500.0
+Cooldown = 1.0
+Damage = 1.0
+KnockbackStrength = 175.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_32tch")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_lwc83")
+
+[node name="Attack" type="Node2D" parent="."]
+visible = false
+
+[node name="Sword" type="Area2D" parent="Attack"]
+position = Vector2(100, -100)
+
+[node name="Sprite2D" type="Sprite2D" parent="Attack/Sword"]
+position = Vector2(5, 184)
+texture = ExtResource("1_lwc83")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Attack/Sword"]
+position = Vector2(7, 182)
+shape = SubResource("RectangleShape2D_4xqoi")
+disabled = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Attack"]
+speed_scale = 4.0
+libraries = {
+"": SubResource("AnimationLibrary_fr753")
+}
+
+[connection signal="body_entered" from="Attack/Sword" to="." method="_on_sword_body_entered"]
+[connection signal="animation_finished" from="Attack/AnimationPlayer" to="." method="_on_animation_player_animation_finished"]
