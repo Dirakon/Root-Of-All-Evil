@@ -1,9 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://ck6ufj41yfmlc"]
+[gd_scene load_steps=2 format=3 uid="uid://vdaub3ttl734"]
 
-[ext_resource type="Script" path="res://RootRoot.cs" id="1_rd0hy"]
+[ext_resource type="Script" path="res://Scripts/RootRoot.cs" id="1_owtja"]
 
 [node name="RootRoot" type="Node2D"]
-script = ExtResource("1_rd0hy")
+script = ExtResource("1_owtja")
 GrowthLimit = 100.0
 WidenessFactor = 0.1
 LongnessFactor = 1.0
@@ -11,10 +11,9 @@ GrowthModifier = 1.0
 TimerRandomnessModifier = 1.0
 
 [node name="RootArea" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 0
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="RootArea"]
-build_mode = 1
-polygon = PackedVector2Array(0, 0, 0, 0)
-
+[connection signal="area_entered" from="RootArea" to="." method="_on_area_entered"]
 [connection signal="body_entered" from="RootArea" to="." method="_on_root_area_body_entered"]
 [connection signal="body_exited" from="RootArea" to="." method="_on_root_area_body_exited"]

@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://dhlf47bg2gxl3"]
+
+[ext_resource type="Texture2D" uid="uid://bojj4s55841ho" path="res://Sprites/health.png" id="1_l3jm3"]
+
+[node name="SingularHealth" type="TextureRect"]
+custom_minimum_size = Vector2(5, 0)
+texture = ExtResource("1_l3jm3")
+expand_mode = 2
+stretch_mode = 4

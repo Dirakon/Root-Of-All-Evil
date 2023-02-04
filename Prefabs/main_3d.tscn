@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3 uid="uid://bye81mr4mod6"]
+
+[ext_resource type="Script" path="res://Scripts/Main3D.cs" id="1_eb3u8"]
+[ext_resource type="PackedScene" uid="uid://g5jbkpk6vwvw" path="res://Prefabs/main_2d.tscn" id="2_kjfx7"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wqmsn"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_hhjqd"]
+size = Vector2(10, 10)
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_2j30k"]
+plane = Plane(0, 0, 1, 0)
+
+[node name="Main3D" type="Node3D"]
+script = ExtResource("1_eb3u8")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -4, 0)
+
+[node name="ViewportQuad" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 5.09226, -5, -10.126)
+material_override = SubResource("StandardMaterial3D_wqmsn")
+mesh = SubResource("PlaneMesh_hhjqd")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="ViewportQuad"]
+transform = Transform3D(1, 0, 0, 0, -0.272314, 0.962209, 0, -0.962209, -0.272314, 0, 3.78701, -1.65536e-07)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="ViewportQuad"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -5, 0, -5)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ViewportQuad/StaticBody3D"]
+shape = SubResource("WorldBoundaryShape3D_2j30k")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="Main2D" parent="SubViewport" instance=ExtResource("2_kjfx7")]

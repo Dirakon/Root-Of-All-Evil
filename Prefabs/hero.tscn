@@ -1,13 +1,14 @@
-[gd_scene load_steps=8 format=3 uid="uid://qh8so4kgcd1t"]
+[gd_scene load_steps=9 format=3 uid="uid://cgqxvrcwtm8op"]
 
-[ext_resource type="Script" path="res://Hero.cs" id="1_e8fla"]
-[ext_resource type="Texture2D" uid="uid://d2n16xb8k5l3s" path="res://icon.svg" id="1_lwc83"]
+[ext_resource type="Script" path="res://Scripts/Hero.cs" id="1_84iow"]
+[ext_resource type="Texture2D" uid="uid://c6763om2mrcjq" path="res://Sprites/hero.png" id="2_so0vn"]
+[ext_resource type="Texture2D" uid="uid://cb1qntbbkr2hv" path="res://Sprites/sword.png" id="3_gerd5"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_32tch"]
 radius = 75.0267
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4xqoi"]
-size = Vector2(124, 122)
+size = Vector2(1, 1)
 
 [sub_resource type="Animation" id="Animation_vhj6r"]
 resource_name = "Attack"
@@ -82,32 +83,45 @@ _data = {
 }
 
 [node name="Hero" type="CharacterBody2D"]
-script = ExtResource("1_e8fla")
+collision_mask = 6
+script = ExtResource("1_84iow")
 Health = 10.0
+MaxHealth = 10.0
 knockBackToDampFactor = 0.95
-Speed = 500.0
-Cooldown = 1.0
+SelfScale = Vector2(0.2, 0.2)
+Speed = 200.0
+Cooldown = 0.9
 Damage = 1.0
 KnockbackStrength = 175.0
+SpeedUpgradeAmount = 51.0
+KnockbackUpgradeAmount = 40.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_32tch")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_lwc83")
+rotation = 1.57079
+scale = Vector2(0.335135, 0.335135)
+texture = ExtResource("2_so0vn")
 
 [node name="Attack" type="Node2D" parent="."]
 visible = false
 
 [node name="Sword" type="Area2D" parent="Attack"]
-position = Vector2(100, -100)
+position = Vector2(67, 56)
+collision_layer = 0
+collision_mask = 8
 
 [node name="Sprite2D" type="Sprite2D" parent="Attack/Sword"]
-position = Vector2(5, 184)
-texture = ExtResource("1_lwc83")
+position = Vector2(53.5522, 34.5522)
+rotation = 2.10834
+scale = Vector2(0.564261, 0.564261)
+texture = ExtResource("3_gerd5")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Attack/Sword"]
-position = Vector2(7, 182)
+position = Vector2(48.5, 31.5)
+rotation = 0.513464
+scale = Vector2(115.254, 31.475)
 shape = SubResource("RectangleShape2D_4xqoi")
 disabled = true
 
@@ -117,5 +131,6 @@ libraries = {
 "": SubResource("AnimationLibrary_fr753")
 }
 
+[connection signal="area_entered" from="Attack/Sword" to="." method="_on_area_entered"]
 [connection signal="body_entered" from="Attack/Sword" to="." method="_on_sword_body_entered"]
 [connection signal="animation_finished" from="Attack/AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

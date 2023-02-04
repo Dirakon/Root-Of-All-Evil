@@ -1,0 +1,112 @@
+[gd_scene load_steps=11 format=3 uid="uid://g5jbkpk6vwvw"]
+
+[ext_resource type="Script" path="res://Scripts/MainArcade.cs" id="1_d70wt"]
+[ext_resource type="PackedScene" uid="uid://cgqxvrcwtm8op" path="res://Prefabs/hero.tscn" id="1_n8d71"]
+[ext_resource type="PackedScene" uid="uid://vdaub3ttl734" path="res://Prefabs/root_root.tscn" id="3_c26kr"]
+[ext_resource type="PackedScene" uid="uid://b7wc4mdv07hto" path="res://Prefabs/upgrade_station.tscn" id="4_sbk7s"]
+[ext_resource type="PackedScene" uid="uid://bopbxdohhh756" path="res://Prefabs/ui.tscn" id="5_1qv8g"]
+[ext_resource type="PackedScene" uid="uid://b5n3eqsv65vyt" path="res://Prefabs/infected_melee.tscn" id="6_58qs6"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_a2rqt"]
+normal = Vector2(-1, 0)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_rilgh"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_onaf1"]
+resource_local_to_scene = true
+normal = Vector2(1, 0)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_kv6p0"]
+normal = Vector2(0, 1)
+
+[node name="Main2D" type="Node2D"]
+script = ExtResource("1_d70wt")
+heroPrefab = ExtResource("1_n8d71")
+StartHeroPosition = Vector2(200, 200)
+
+[node name="Wall1" type="StaticBody2D" parent="."]
+position = Vector2(500, 500)
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall1"]
+shape = SubResource("WorldBoundaryShape2D_a2rqt")
+
+[node name="Wall2" type="StaticBody2D" parent="."]
+position = Vector2(500, 500)
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall2"]
+shape = SubResource("WorldBoundaryShape2D_rilgh")
+
+[node name="Wall3" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall3"]
+shape = SubResource("WorldBoundaryShape2D_onaf1")
+
+[node name="Wall4" type="StaticBody2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wall4"]
+shape = SubResource("WorldBoundaryShape2D_kv6p0")
+
+[node name="RootRoot" parent="." instance=ExtResource("3_c26kr")]
+position = Vector2(309, 309)
+GrowthLimit = 75.0
+WidenessFactor = 0.07
+GrowthModifier = 20.0
+EgoismFactor = 0.05
+CreationEgoismFactor = 0.8
+MaxOffspring = 4
+StartColor = Color(0.266667, 0.662745, 0.392157, 1)
+EndColor = Color(0, 0.360784, 0, 1)
+
+[node name="RootRoot3" parent="." instance=ExtResource("3_c26kr")]
+position = Vector2(100, 100)
+GrowthLimit = 75.0
+WidenessFactor = 0.07
+GrowthModifier = 20.0
+EgoismFactor = 0.05
+CreationEgoismFactor = 0.8
+MaxOffspring = 4
+StartColor = Color(0.266667, 0.662745, 0.392157, 1)
+EndColor = Color(0, 0.360784, 0, 1)
+
+[node name="RootRoot6" parent="." instance=ExtResource("3_c26kr")]
+position = Vector2(218, 158)
+GrowthLimit = 75.0
+WidenessFactor = 0.07
+GrowthModifier = 20.0
+EgoismFactor = 0.05
+CreationEgoismFactor = 0.8
+MaxOffspring = 4
+StartColor = Color(0.266667, 0.662745, 0.392157, 1)
+EndColor = Color(0, 0.360784, 0, 1)
+
+[node name="RootRoot9" parent="." instance=ExtResource("3_c26kr")]
+position = Vector2(92, 409)
+GrowthLimit = 75.0
+WidenessFactor = 0.07
+GrowthModifier = 20.0
+EgoismFactor = 0.05
+CreationEgoismFactor = 0.8
+MaxOffspring = 4
+StartColor = Color(0.266667, 0.662745, 0.392157, 1)
+EndColor = Color(0, 0.360784, 0, 1)
+
+[node name="UpgradeStation" parent="." instance=ExtResource("4_sbk7s")]
+position = Vector2(173, 82)
+
+[node name="UpgradeStation" parent="UpgradeStation" instance=ExtResource("4_sbk7s")]
+position = Vector2(173, 82)
+
+[node name="UI" parent="." instance=ExtResource("5_1qv8g")]
+
+[node name="UpgradeStation2" parent="." instance=ExtResource("4_sbk7s")]
+position = Vector2(500, 500)
+
+[node name="Enemy" parent="." instance=ExtResource("6_58qs6")]
