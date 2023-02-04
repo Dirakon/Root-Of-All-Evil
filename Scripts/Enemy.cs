@@ -119,9 +119,25 @@ public class RangedEnemy : EnemyType
 
 public class InfectedRangedEnemy : EnemyType
 {
+    private const float ToMakeProjectile = 5f;
+    private double ToMakeLeft = ToMakeProjectile;
     public override Vector2 ProcessPersonalVelocity(double delta)
     {
         return Vector2.Zero;
+    }
+    public override void Process(double delta)
+    {
+        ToMakeLeft -= delta;
+        if (ToMakeLeft <=0)
+        {
+            GD.Print("MAKIG");
+            ToMakeLeft = ToMakeProjectile;
+            var projectile = MainArcade.Instance().InfectedProjectilePrefab.Instantiate() as InfectedProjectile;
+            Enemy.GetParent().AddChild(projectile);
+            projectile.GlobalPosition = Enemy.GlobalPosition;
+            projectile.Init(Hero.Instance().GlobalPosition);
+        }
+        
     }
 }
 

@@ -14,11 +14,11 @@ script = ExtResource("1_ytjbw")
 AppliedToSelfKnockbackModifer = 1.0
 Damage = 1.0
 EnemyTypeId = "melee"
-Health = 4.0
+Health = 2.0
 KnockbackStrength = 0.0
 knockBackToDampFactor = 0.95
 SelfScale = Vector2(0.2, 0.2)
-Speed = 20.0
+Speed = 100.0
 Acceleraion = 5.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

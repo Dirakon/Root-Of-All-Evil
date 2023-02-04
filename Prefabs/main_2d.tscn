@@ -1,12 +1,13 @@
-[gd_scene load_steps=12 format=3 uid="uid://g5jbkpk6vwvw"]
+[gd_scene load_steps=13 format=3 uid="uid://g5jbkpk6vwvw"]
 
 [ext_resource type="Script" path="res://Scripts/MainArcade.cs" id="1_d70wt"]
 [ext_resource type="PackedScene" uid="uid://cgqxvrcwtm8op" path="res://Prefabs/hero.tscn" id="1_n8d71"]
 [ext_resource type="PackedScene" uid="uid://vdaub3ttl734" path="res://Prefabs/root_root.tscn" id="3_c26kr"]
 [ext_resource type="PackedScene" uid="uid://b7wc4mdv07hto" path="res://Prefabs/upgrade_station.tscn" id="4_sbk7s"]
+[ext_resource type="PackedScene" uid="uid://cnjhuoy4jyatn" path="res://Prefabs/infectedProjectile.tscn" id="4_uds1s"]
 [ext_resource type="PackedScene" uid="uid://bopbxdohhh756" path="res://Prefabs/ui.tscn" id="5_1qv8g"]
 [ext_resource type="PackedScene" uid="uid://csl0wwmclix7q" path="res://Prefabs/projectile.tscn" id="7_6s8f6"]
-[ext_resource type="PackedScene" uid="uid://dwkhfe8kpoyp" path="res://Prefabs/ranged.tscn" id="7_he7sw"]
+[ext_resource type="PackedScene" uid="uid://mn0dxue6l5t1" path="res://Prefabs/infectedRanged.tscn" id="7_jwugf"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_a2rqt"]
 normal = Vector2(-1, 0)
@@ -25,7 +26,16 @@ script = ExtResource("1_d70wt")
 heroPrefab = ExtResource("1_n8d71")
 StartHeroPosition = Vector2(200, 200)
 UninfectedProjectilePrefab = ExtResource("7_6s8f6")
+InfectedProjectilePrefab = ExtResource("4_uds1s")
 RootPrefab = ExtResource("3_c26kr")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -624.0
+offset_top = -404.0
+offset_right = -584.0
+offset_bottom = -364.0
+scale = Vector2(73.4533, 162.971)
+color = Color(0, 0, 0, 1)
 
 [node name="Wall1" type="StaticBody2D" parent="."]
 position = Vector2(500, 500)
@@ -57,50 +67,6 @@ collision_mask = 0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Wall4"]
 shape = SubResource("WorldBoundaryShape2D_kv6p0")
 
-[node name="RootRoot" parent="." instance=ExtResource("3_c26kr")]
-position = Vector2(309, 309)
-GrowthLimit = 75.0
-WidenessFactor = 0.07
-GrowthModifier = 20.0
-EgoismFactor = 0.05
-CreationEgoismFactor = 0.8
-MaxOffspring = 4
-StartColor = Color(0.266667, 0.662745, 0.392157, 1)
-EndColor = Color(0, 0.360784, 0, 1)
-
-[node name="RootRoot3" parent="." instance=ExtResource("3_c26kr")]
-position = Vector2(100, 100)
-GrowthLimit = 75.0
-WidenessFactor = 0.07
-GrowthModifier = 20.0
-EgoismFactor = 0.05
-CreationEgoismFactor = 0.8
-MaxOffspring = 4
-StartColor = Color(0.266667, 0.662745, 0.392157, 1)
-EndColor = Color(0, 0.360784, 0, 1)
-
-[node name="RootRoot6" parent="." instance=ExtResource("3_c26kr")]
-position = Vector2(218, 158)
-GrowthLimit = 75.0
-WidenessFactor = 0.07
-GrowthModifier = 20.0
-EgoismFactor = 0.05
-CreationEgoismFactor = 0.8
-MaxOffspring = 4
-StartColor = Color(0.266667, 0.662745, 0.392157, 1)
-EndColor = Color(0, 0.360784, 0, 1)
-
-[node name="RootRoot9" parent="." instance=ExtResource("3_c26kr")]
-position = Vector2(92, 409)
-GrowthLimit = 75.0
-WidenessFactor = 0.07
-GrowthModifier = 20.0
-EgoismFactor = 0.05
-CreationEgoismFactor = 0.8
-MaxOffspring = 4
-StartColor = Color(0.266667, 0.662745, 0.392157, 1)
-EndColor = Color(0, 0.360784, 0, 1)
-
 [node name="UpgradeStation" parent="." instance=ExtResource("4_sbk7s")]
 position = Vector2(173, 82)
 
@@ -115,5 +81,5 @@ position = Vector2(500, 500)
 [node name="Projectile" parent="." instance=ExtResource("7_6s8f6")]
 position = Vector2(280, 187)
 
-[node name="Enemy2" parent="." instance=ExtResource("7_he7sw")]
-position = Vector2(351, 232)
+[node name="Enemy" parent="." instance=ExtResource("7_jwugf")]
+position = Vector2(559, 314)

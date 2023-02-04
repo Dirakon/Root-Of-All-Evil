@@ -6,7 +6,16 @@ using Godot;
 public partial class RootRoot : Node2D
 {
     public static List<RootRoot> AllRoots;
-    public static RootController Controller;
+
+    private static RootController _controller;
+    public static RootController Controller
+    {
+        get
+        {
+            _controller ??= new RootController();
+            return _controller;
+        }
+    }
 
     private readonly List<Enemy> affectedEnemies = new();
     private Hero? affectedHero;
@@ -33,13 +42,11 @@ public partial class RootRoot : Node2D
         Polygon2D = new CollisionPolygon2D();
         GetNode("RootArea").AddChild(Polygon2D);
         AllRoots ??= new List<RootRoot>();
-        Controller ??= new RootController();
         AllRoots.Add(this);
         RootLine = new RootLine(
             Vector2.Zero, 
             Vector2.FromAngle(Random.Shared.NextSingle() * (float) Math.PI * 2), GrowthLimit, WidenessFactor,
             LongnessFactor, EgoismFactor, CreationEgoismFactor, MaxOffspring, StartColor, EndColor);
-        RegularOffspringCreator();
     }
 
     public void GetCutByLine((Vector2, Vector2 )line)
@@ -62,17 +69,6 @@ public partial class RootRoot : Node2D
         }
         
         
-    }
-
-    
-    private async void RegularOffspringCreator()
-    {
-        // while (true)
-        // {
-        // 	await ToSignal(GetTree().CreateTimer(TimerRandomnessModifier * Random.Shared.NextDouble()), "timeout");
-        // 	circles.Add(RootLine.GetRandomOffspringPoint());
-        // //	RootLine.CreateOffspring();
-        // }
     }
 
     public override void _Draw()
@@ -152,6 +148,17 @@ public partial class RootRoot : Node2D
     public void _on_area_entered(Area2D area)
     {
     }
+
+    public void Reset()
+    {
+        Visible = true;
+        
+        RootLine = new RootLine(
+            Vector2.Zero, 
+            Vector2.FromAngle(Random.Shared.NextSingle() * (float) Math.PI * 2), GrowthLimit, WidenessFactor,
+            LongnessFactor, EgoismFactor, CreationEgoismFactor, MaxOffspring, StartColor, EndColor);
+        QueueRedraw();
+    }
 }
 
 public class RootController
@@ -160,6 +167,10 @@ public class RootController
     private int RootPtr;
     private readonly int RootsPerProcess = 2;
 
+    public RootController()
+    {
+        RootRoot.AllRoots ??= new();
+    }
     public void Process(double delta)
     {
         this.delta = delta;
@@ -171,6 +182,25 @@ public class RootController
                 continue;
             RootRoot.AllRoots[RootPtr].TrueProcess(delta * RootRoot.AllRoots.Count / RootsPerProcess);
         }
+    }
+
+    public void CreateNewRoot(Vector2 position)
+    {
+        
+        var root = RootRoot.AllRoots.Find(root => !root.Visible);
+        if (root == null)
+        {
+            root = MainArcade.Instance().RootPrefab.Instantiate() as RootRoot;
+            MainArcade.Instance().AddChild(root);
+            
+        }
+        else
+        {
+            root.Reset();
+        }
+
+        root.GlobalPosition = position;
+        
     }
 }
 

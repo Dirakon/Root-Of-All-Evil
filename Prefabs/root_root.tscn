@@ -4,11 +4,15 @@
 
 [node name="RootRoot" type="Node2D"]
 script = ExtResource("1_owtja")
-GrowthLimit = 100.0
-WidenessFactor = 0.1
+GrowthLimit = 75.0
+WidenessFactor = 0.07
 LongnessFactor = 1.0
-GrowthModifier = 1.0
+GrowthModifier = 20.0
 TimerRandomnessModifier = 1.0
+EgoismFactor = 0.05
+CreationEgoismFactor = 0.8
+MaxOffspring = 4
+StartColor = Color(0.662745, 0.701961, 0.141176, 1)
 
 [node name="RootArea" type="Area2D" parent="."]
 collision_layer = 8
