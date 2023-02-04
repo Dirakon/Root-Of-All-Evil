@@ -38,6 +38,7 @@ public partial class Enemy : CharacterBody2D
 
     public override void _PhysicsProcess(double delta)
     {
+        _enemyType.Process(delta);
         LookAt(Hero.Instance().GlobalPosition);
         PersonalVelocity = _enemyType.ProcessPersonalVelocity(delta);
 
@@ -78,6 +79,9 @@ public abstract class EnemyType
     {
         return Enemy.GlobalTransform.X.Normalized() * (float) (delta * Enemy.Speed);
     }
+    public virtual void Process(double delta)
+    {
+    }
 }
 
 public class MeleeEnemy : EnemyType
@@ -92,9 +96,24 @@ public class MeleeEnemy : EnemyType
 
 public class RangedEnemy : EnemyType
 {
+    private const float ToMakeProjectile = 5f;
+    private double ToMakeLeft = ToMakeProjectile;
     public override Vector2 ProcessPersonalVelocity(double delta)
     {
         return Vector2.Zero;
+    }
+    public override void Process(double delta)
+    {
+        ToMakeLeft -= delta;
+        if (ToMakeLeft <=0)
+        {
+            ToMakeLeft = ToMakeProjectile;
+            var projectile = MainArcade.Instance().UninfectedProjectilePrefab.Instantiate() as Projectile;
+            Enemy.GetParent().AddChild(projectile);
+            projectile.GlobalPosition = Enemy.GlobalPosition;
+            projectile.Init(Enemy.GlobalPosition.DirectionTo(Hero.Instance().GlobalPosition),Hero.Instance().GlobalPosition);
+        }
+        
     }
 }
 

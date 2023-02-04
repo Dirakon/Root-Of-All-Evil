@@ -91,7 +91,9 @@ public partial class RootRoot : Node2D
         if (this == AllRoots[0])
             Controller.Process(delta);
 
-
+        if (!Visible)
+            return;
+        
         AffectEnemies(delta);
         if (affectedHero != null)
             AffectHero(delta);
@@ -357,7 +359,6 @@ public class RootLine
     public bool GetCutByLine(Vector2 startLocal, Vector2 endLocal)
     {
         var ans = Geometry2D.SegmentIntersectsSegment(startLocal, endLocal, Start, End).As<Vector2>();
-        GD.Print(Geometry2D.SegmentIntersectsSegment(startLocal, endLocal, Start, End));
         if (ans.IsEqualApprox(Vector2.Zero))
         {
             foreach (var rootLine in Offsprings)

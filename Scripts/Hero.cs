@@ -53,9 +53,16 @@ public partial class Hero : CharacterBody2D
 
     public void _on_area_entered(Area2D area)
     {
-        GD.Print("Here");
-        var RootToCut = area.GetParent() as RootRoot;
-        RootToCut.GetCutByLine(GetSwordAsLine());
+        if (area.Name.ToString().StartsWith("Root"))
+        {
+            var RootToCut = area.GetParent() as RootRoot;
+            RootToCut.GetCutByLine(GetSwordAsLine());
+        }
+        else
+        {
+            area.QueueFree();
+            
+        }
     }
 
     public void _on_area_exited(Area2D area)
@@ -103,12 +110,6 @@ public partial class Hero : CharacterBody2D
         }
     }
 
-    public override void _Draw()
-    {
-        base._Draw();
-        var (from, to) = GetSwordAsLine();
-        DrawLine(from, to, Colors.Red, 10f);
-    }
 
     public async void DoCooldown()
     {

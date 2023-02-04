@@ -18,7 +18,7 @@ script = ExtResource("1_eb3u8")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -4, 0)
 
 [node name="ViewportQuad" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 5.09226, -5, -10.126)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 5.09226, -5, -9.50919)
 material_override = SubResource("StandardMaterial3D_wqmsn")
 mesh = SubResource("PlaneMesh_hhjqd")
 

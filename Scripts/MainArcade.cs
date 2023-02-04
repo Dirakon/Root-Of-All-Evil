@@ -9,7 +9,7 @@ public partial class MainArcade : Node2D
     private Vector2 minPosition, maxPosition;
     [Export] private Vector2 StartHeroPosition;
     private ArcadeState state;
-    [Export] public PackedScene UninfectedProjectile, InfectedProjectile;
+    [Export] public PackedScene UninfectedProjectilePrefab, InfectedProjectilePrefab, RootPrefab;
 
     public MainArcade()
     {
