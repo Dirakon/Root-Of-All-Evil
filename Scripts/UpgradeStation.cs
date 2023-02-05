@@ -11,10 +11,6 @@ public partial class UpgradeStation : Area2D
     {
     }
 
-    public void SetUpgrade(Upgrade upgrade)
-    {
-        associatedUpgrade = upgrade;
-    }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
@@ -26,6 +22,14 @@ public partial class UpgradeStation : Area2D
         var hero = node as Hero;
         if (hero == null || associatedUpgrade == null)
             return;
+        MainArcade.Instance().UpgradeSelected(associatedUpgrade);
+    }
+
+    public void Init(Upgrade upgrade)
+    {
+        associatedUpgrade = upgrade;
+        var associatedTexture = ResourceLoader.Load<Texture2D>($"res://Sprites/{upgrade.GetUpgradeFileName()}.png");
+        (GetNode("Sprite2D") as Sprite2D).Texture = associatedTexture;
     }
 }
 

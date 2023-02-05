@@ -16,12 +16,12 @@ AppliedToSelfKnockbackModifer = 1.0
 Damage = 1.0
 EnemyTypeId = "melee"
 Health = 2.0
+InfectedVersion = ExtResource("2_ucf51")
 KnockbackStrength = 0.0
 knockBackToDampFactor = 0.95
 SelfScale = Vector2(0.2, 0.2)
 Speed = 100.0
 Acceleraion = 5.0
-InfectedVersion = ExtResource("2_ucf51")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.390955, 0.390955)

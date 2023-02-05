@@ -1,16 +1,20 @@
 [gd_scene load_steps=4 format=3 uid="uid://b7wc4mdv07hto"]
 
 [ext_resource type="Script" path="res://Scripts/UpgradeStation.cs" id="1_343js"]
-[ext_resource type="Texture2D" uid="uid://d2n16xb8k5l3s" path="res://icon.svg" id="1_xfugc"]
+[ext_resource type="Texture2D" uid="uid://d36ptin2e6u5w" path="res://Sprites/reachUpgrade.png" id="2_tanhl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1x6s7"]
 
 [node name="UpgradeStation" type="Area2D"]
+collision_layer = 64
 script = ExtResource("1_343js")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.407453, 0.407453)
-texture = ExtResource("1_xfugc")
+position = Vector2(3.8147e-06, 5.72205e-06)
+scale = Vector2(0.158793, 0.158793)
+texture = ExtResource("2_tanhl")
+
+[node name="Sprite2D" type="Sprite2D" parent="Sprite2D"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 scale = Vector2(2.60953, 2.60953)

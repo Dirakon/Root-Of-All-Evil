@@ -10,12 +10,12 @@ public partial class Enemy : CharacterBody2D
     [Export] public float Damage = 10.0f;
     [Export] private string EnemyTypeId;
     [Export] public float Health = 10.0f;
+    [Export] private PackedScene InfectedVersion;
     [Export] public float KnockbackStrength = 10.0f;
     [Export] public float knockBackToDampFactor;
     public Vector2 PersonalVelocity = Vector2.Zero;
     [Export] private Vector2 SelfScale;
     [Export] public float Speed = 300.0f, Acceleraion;
-    [Export] private PackedScene InfectedVersion;
 
     public bool IsInfected()
     {
@@ -39,6 +39,7 @@ public partial class Enemy : CharacterBody2D
 
     public override void _PhysicsProcess(double delta)
     {
+        if (Hero.Instance() == null) return;
         _enemyType.Process(delta);
         LookAt(Hero.Instance().GlobalPosition);
         PersonalVelocity = _enemyType.ProcessPersonalVelocity(delta);
@@ -62,9 +63,14 @@ public partial class Enemy : CharacterBody2D
     {
         Health -= damage;
         if (Health < 0)
+        {
+            MainArcade.Instance().EnemiesThisWave.Remove(this);
             QueueFree();
+        }
         else
+        {
             AppliedKnockback += knockback * AppliedToSelfKnockbackModifer;
+        }
     }
 
     public void GetInfected()
@@ -72,6 +78,7 @@ public partial class Enemy : CharacterBody2D
         QueueFree();
         var evolution = InfectedVersion.Instantiate() as Node2D;
         evolution.GlobalPosition = GlobalPosition;
+        MainArcade.Instance().EnemiesThisWave.Remove(this);
         MainArcade.Instance().AddChild(evolution);
     }
 }
@@ -88,6 +95,7 @@ public abstract class EnemyType
     {
         return Enemy.GlobalTransform.X.Normalized() * (float) (delta * Enemy.Speed);
     }
+
     public virtual void Process(double delta)
     {
     }
@@ -105,39 +113,43 @@ public class MeleeEnemy : EnemyType
 
 public class RangedEnemy : EnemyType
 {
-    private const float ToMakeProjectile = 5f;
+    private const float ToMakeProjectile = 2f;
     private double ToMakeLeft = ToMakeProjectile;
+
     public override Vector2 ProcessPersonalVelocity(double delta)
     {
         return Vector2.Zero;
     }
+
     public override void Process(double delta)
     {
         ToMakeLeft -= delta;
-        if (ToMakeLeft <=0)
+        if (ToMakeLeft <= 0)
         {
             ToMakeLeft = ToMakeProjectile;
             var projectile = MainArcade.Instance().UninfectedProjectilePrefab.Instantiate() as Projectile;
             Enemy.GetParent().AddChild(projectile);
             projectile.GlobalPosition = Enemy.GlobalPosition;
-            projectile.Init(Enemy.GlobalPosition.DirectionTo(Hero.Instance().GlobalPosition),Hero.Instance().GlobalPosition);
+            projectile.Init(Enemy.GlobalPosition.DirectionTo(Hero.Instance().GlobalPosition),
+                Hero.Instance().GlobalPosition);
         }
-        
     }
 }
 
 public class InfectedRangedEnemy : EnemyType
 {
-    private const float ToMakeProjectile = 5f;
+    private const float ToMakeProjectile = 2f;
     private double ToMakeLeft = ToMakeProjectile;
+
     public override Vector2 ProcessPersonalVelocity(double delta)
     {
         return Vector2.Zero;
     }
+
     public override void Process(double delta)
     {
         ToMakeLeft -= delta;
-        if (ToMakeLeft <=0)
+        if (ToMakeLeft <= 0)
         {
             ToMakeLeft = ToMakeProjectile;
             var projectile = MainArcade.Instance().InfectedProjectilePrefab.Instantiate() as InfectedProjectile;
@@ -145,7 +157,6 @@ public class InfectedRangedEnemy : EnemyType
             projectile.GlobalPosition = Enemy.GlobalPosition;
             projectile.Init(Hero.Instance().GlobalPosition);
         }
-        
     }
 }
 

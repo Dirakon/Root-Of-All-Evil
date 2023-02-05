@@ -12,6 +12,11 @@ internal static class LinqUtils
         return list.IsEmpty() ? default(TSource?) : list.MinBy(keySelector);
     }
 
+    public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
+    {
+        var rnd = new Random();
+        return source.OrderBy(item => rnd.Next());
+    }
     // An example of a bad language design for C#. The following function gives an error,
     // even though it clearly works for reference types only, while the function above works for value types only...
     //

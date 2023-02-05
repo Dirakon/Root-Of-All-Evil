@@ -3,7 +3,7 @@ using Godot;
 public partial class Main3D : Node3D
 {
     private const float RayLength = 100000.0f;
-    
+
     public static Vector2 SupposedMousePosition = Vector2.Zero;
 
     // Called when the node enters the scene tree for the first time.

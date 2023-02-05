@@ -5,18 +5,20 @@ public partial class Hero : CharacterBody2D
 {
     private static Hero instance;
 
-    public int SwingCount = 0; 
+    private readonly List<Enemy> damagedEnemiesThisSwing = new();
     private AnimationPlayer AnimationPlayer;
     private Vector2 AppliedKnockback = Vector2.Zero;
-
-    private readonly List<Enemy> damagedEnemiesThisSwing = new();
     [Export] public float Health, MaxHealth;
     [Export] private float knockBackToDampFactor;
     private bool OnCooldown;
     private Vector2 OriginalSwordReach;
+
+    private RootRoot rootToCut;
     [Export] private Vector2 SelfScale;
-    [Export] private float SpeedDebuffFromRoot, DamageFromRoots;
     [Export] public float Speed, Cooldown, Damage, KnockbackStrength, SpeedUpgradeAmount, KnockbackUpgradeAmount;
+    [Export] private float SpeedDebuffFromRoot, DamageFromRoots;
+
+    public int SwingCount;
     private Node2D sword;
     private CollisionShape2D swordCollision;
 
@@ -32,7 +34,7 @@ public partial class Hero : CharacterBody2D
 
     public static Hero Instance()
     {
-        return instance;
+        return IsInstanceValid(instance) ? instance : null;
     }
 
     public void IncreaseAttackSpeedBy(float factor)
@@ -50,22 +52,16 @@ public partial class Hero : CharacterBody2D
         return (
             sword.GlobalPosition,
             swordCollision.GlobalTransform.X + sword.GlobalPosition
-            );
+        );
     }
 
-    private RootRoot rootToCut;
     public void _on_area_entered(Area2D area)
     {
         if (area.Name.ToString().StartsWith("Root"))
-        {
             rootToCut = area.GetParent() as RootRoot;
-        }
         else
-        {
             // Cutting projectiles
             area.QueueFree();
-            
-        }
     }
 
     public void _on_area_exited(Area2D area)
@@ -92,19 +88,13 @@ public partial class Hero : CharacterBody2D
         if (rootToCut != null)
         {
             if (swordCollision.Disabled)
-            {
                 rootToCut = null;
-            }
             else if (!rootToCut.Visible)
-            {
                 rootToCut = null;
-            }
             else
-            {
-                
                 rootToCut.GetCutByLine(GetSwordAsLine(), Damage);
-            }
         }
+
         // GD.Print(GetGlobalMousePosition());
         // GD.Print(GetViewport().GetFinalTransform().BasisXformInv(GetGlobalMousePosition()));
         if (!IsAttacking)
@@ -115,8 +105,9 @@ public partial class Hero : CharacterBody2D
         {
             RootRoot.HeroTouchedThisProcess = false;
             Velocity *= SpeedDebuffFromRoot;
-            TakeDamage(delta*DamageFromRoots,Vector2.Zero);
+            TakeDamage(delta * DamageFromRoots, Vector2.Zero);
         }
+
         MoveAndSlide();
 
         var knockbackDampingFactor = knockBackToDampFactor * delta;
@@ -125,7 +116,8 @@ public partial class Hero : CharacterBody2D
         AppliedKnockback *= 1 - (float) knockbackDampingFactor;
 
 
-        if (!OnCooldown && Input.IsMouseButtonPressed(MouseButton.Left) && !IsAttacking) {
+        if (!OnCooldown && Input.IsMouseButtonPressed(MouseButton.Left) && !IsAttacking)
+        {
             AnimationPlayer.Play("Attack");
             SwingCount++;
         }

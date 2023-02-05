@@ -16,12 +16,12 @@ AppliedToSelfKnockbackModifer = 0.2
 Damage = 1.0
 EnemyTypeId = "ranged"
 Health = 4.0
+InfectedVersion = ExtResource("2_cxeah")
 KnockbackStrength = 0.0
 knockBackToDampFactor = 0.95
 SelfScale = Vector2(0.2, 0.2)
 Speed = 20.0
 Acceleraion = 5.0
-InfectedVersion = ExtResource("2_cxeah")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.57079

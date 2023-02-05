@@ -11,7 +11,6 @@ GrowthModifier = 20.0
 TimerRandomnessModifier = 1.0
 EgoismFactor = 0.05
 CreationEgoismFactor = 0.8
-RootHealth = 2.0
 MaxOffspring = 4
 StartColor = Color(0.662745, 0.701961, 0.141176, 1)
 
