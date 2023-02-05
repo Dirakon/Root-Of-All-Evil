@@ -64,7 +64,8 @@ public partial class Enemy : CharacterBody2D
         Health -= damage;
         if (Health < 0)
         {
-            MainArcade.Instance().EnemiesThisWave.Remove(this);
+            if (!IsInfected())
+                MainArcade.Instance().EnemiesThisWave.Remove(this);
             QueueFree();
         }
         else
@@ -73,13 +74,17 @@ public partial class Enemy : CharacterBody2D
         }
     }
 
-    public void GetInfected()
+    public void ActivateInfection()
     {
         QueueFree();
         var evolution = InfectedVersion.Instantiate() as Node2D;
         evolution.GlobalPosition = GlobalPosition;
         MainArcade.Instance().EnemiesThisWave.Remove(this);
         MainArcade.Instance().AddChild(evolution);
+    }
+    public void GetInfected()
+    {
+        CallDeferred(MethodName.ActivateInfection);
     }
 }
 

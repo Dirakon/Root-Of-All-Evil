@@ -1,11 +1,21 @@
-[gd_scene load_steps=3 format=3 uid="uid://bopbxdohhh756"]
+[gd_scene load_steps=5 format=3 uid="uid://bopbxdohhh756"]
 
 [ext_resource type="Script" path="res://Scripts/HealthLine.cs" id="1_syps0"]
 [ext_resource type="PackedScene" uid="uid://dhlf47bg2gxl3" path="res://Prefabs/singular_health.tscn" id="2_pyjxx"]
+[ext_resource type="Script" path="res://Scripts/MouseReminder.cs" id="3_3d3q8"]
+[ext_resource type="Texture2D" uid="uid://ca3i1dvm0tga6" path="res://Sprites/mouseIcon.png" id="3_e1rpl"]
 
 [node name="UI" type="CanvasLayer"]
 scale = Vector2(4, 4)
 transform = Transform2D(4, 0, 0, 4, 0, 0)
+
+[node name="MouseReminder" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.454902)
+offset_right = 640.0
+offset_bottom = 640.0
+scale = Vector2(0.168249, 0.168249)
+texture = ExtResource("3_e1rpl")
+script = ExtResource("3_3d3q8")
 
 [node name="HealthLine" type="HBoxContainer" parent="."]
 offset_right = 10.0

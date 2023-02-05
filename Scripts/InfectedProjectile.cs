@@ -17,16 +17,20 @@ public partial class InfectedProjectile : Area2D
     {
     }
 
+    private bool IsDead = false;
+
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
+        if (IsDead)
+            return;
         var difference = target - GlobalPosition;
         var distanceLeft = difference.Length();
         var distanceToMove = delta * speed;
         if (distanceToMove >= distanceLeft)
         {
-            CreateRoot();
-            QueueFree();
+            IsDead = true;
+            CallDeferred(MethodName.CreateRoot);
         }
         else
         {
@@ -39,19 +43,21 @@ public partial class InfectedProjectile : Area2D
         RootRoot.AllRoots ??= new List<RootRoot>();
         RootRoot.AllRoots.RemoveAll(root => !IsInstanceValid(root));
         RootRoot.Controller.CreateNewRoot(GlobalPosition);
+        QueueFree();
     }
 
     public void _on_body_entered(Node2D body)
     {
-        CreateRoot();
+        if (IsDead)
+            return;
+        IsDead = true;
+        CallDeferred(MethodName.CreateRoot);
         switch (body)
         {
             case Hero hero:
                 hero.TakeDamage(damage, Vector2.Zero);
-                QueueFree();
                 break;
             default:
-                QueueFree();
                 break;
         }
     }

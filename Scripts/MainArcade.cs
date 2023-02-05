@@ -106,13 +106,18 @@ public partial class MainArcade : Node2D
     public void SpawnEnemy(PackedScene enemyPrefab)
     {
         var enemy = enemyPrefab.Instantiate() as Enemy;
-        AddChild(enemy);
         enemy.GlobalPosition = ChooseSpawnPosition();
-        GD.PrintErr(enemy.GlobalPosition);
+        AddChild(enemy);
         EnemiesThisWave.Add(enemy);
     }
 
 
+    private void CreateRoot()
+    {
+        RootRoot.AllRoots ??= new List<RootRoot>();
+        RootRoot.AllRoots.RemoveAll(root => !IsInstanceValid(root));
+        RootRoot.Controller.CreateNewRoot(ChooseSpawnPosition());
+    }
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
@@ -124,10 +129,7 @@ public partial class MainArcade : Node2D
             {
                 currentRootPlantTime = Math.Max(MinRootPlantTime,
                     StartRootPlantTime - InfectionValue * RootPlantTimeInfectionFactor);
-
-                RootRoot.AllRoots ??= new List<RootRoot>();
-                RootRoot.AllRoots.RemoveAll(root => !IsInstanceValid(root));
-                RootRoot.Controller.CreateNewRoot(ChooseSpawnPosition());
+                CallDeferred(MethodName.CreateRoot);
             }
         }
 
