@@ -15,6 +15,7 @@ public partial class Enemy : CharacterBody2D
     public Vector2 PersonalVelocity = Vector2.Zero;
     [Export] private Vector2 SelfScale;
     [Export] public float Speed = 300.0f, Acceleraion;
+    [Export] private PackedScene InfectedVersion;
 
     public bool IsInfected()
     {
@@ -64,6 +65,14 @@ public partial class Enemy : CharacterBody2D
             QueueFree();
         else
             AppliedKnockback += knockback * AppliedToSelfKnockbackModifer;
+    }
+
+    public void GetInfected()
+    {
+        QueueFree();
+        var evolution = InfectedVersion.Instantiate() as Node2D;
+        evolution.GlobalPosition = GlobalPosition;
+        MainArcade.Instance().AddChild(evolution);
     }
 }
 
@@ -130,7 +139,6 @@ public class InfectedRangedEnemy : EnemyType
         ToMakeLeft -= delta;
         if (ToMakeLeft <=0)
         {
-            GD.Print("MAKIG");
             ToMakeLeft = ToMakeProjectile;
             var projectile = MainArcade.Instance().InfectedProjectilePrefab.Instantiate() as InfectedProjectile;
             Enemy.GetParent().AddChild(projectile);

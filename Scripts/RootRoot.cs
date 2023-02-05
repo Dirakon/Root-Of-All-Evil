@@ -17,10 +17,8 @@ public partial class RootRoot : Node2D
         }
     }
 
-    private readonly List<Enemy> affectedEnemies = new();
-    private Hero? affectedHero;
+    private Hero? affectedHero = null;
 
-    private List<Vector2> circles = new();
 
     [Export] public float GrowthLimit,
         WidenessFactor,
@@ -28,10 +26,13 @@ public partial class RootRoot : Node2D
         GrowthModifier,
         TimerRandomnessModifier,
         EgoismFactor,
-        CreationEgoismFactor;
+        CreationEgoismFactor,
+        RootHealth;
 
+    public static bool HeroTouchedThisProcess = false;
     [Export] public int MaxOffspring;
-    public CollisionPolygon2D Polygon2D;
+    public CollisionShape2D Shape2D;
+    public ConvexPolygonShape2D Polygon2D;
     public RootLine RootLine;
 
     [Export] public Color StartColor, EndColor;
@@ -39,26 +40,29 @@ public partial class RootRoot : Node2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        Polygon2D = new CollisionPolygon2D();
-        GetNode("RootArea").AddChild(Polygon2D);
+        Shape2D = new CollisionShape2D();
+        Polygon2D = new ConvexPolygonShape2D();
+        Shape2D.Shape = Polygon2D;
+        (GetNode("RootArea") as Area2D).AddChild(Shape2D);
         AllRoots ??= new List<RootRoot>();
         AllRoots.Add(this);
         RootLine = new RootLine(
             Vector2.Zero, 
             Vector2.FromAngle(Random.Shared.NextSingle() * (float) Math.PI * 2), GrowthLimit, WidenessFactor,
-            LongnessFactor, EgoismFactor, CreationEgoismFactor, MaxOffspring, StartColor, EndColor);
+            LongnessFactor, EgoismFactor, CreationEgoismFactor, MaxOffspring, StartColor, EndColor,RootHealth);
     }
 
-    public void GetCutByLine((Vector2, Vector2 )line)
+    public void GetCutByLine((Vector2, Vector2 )line, double damage)
     {
         var (startLocal, endLocal) = line;
         startLocal = ToLocal(startLocal);
         endLocal = ToLocal(endLocal);
 
 
-        if (RootLine.GetCutByLine(startLocal, endLocal))
+        if (RootLine.GetCutByLine(startLocal, endLocal, damage))
         {
             Visible = false;
+            Shape2D.Disabled = true;
             //AllRoots.Remove(this);
                 //QueueFree();    
         }
@@ -90,7 +94,6 @@ public partial class RootRoot : Node2D
         if (!Visible)
             return;
         
-        AffectEnemies(delta);
         if (affectedHero != null)
             AffectHero(delta);
     }
@@ -98,20 +101,21 @@ public partial class RootRoot : Node2D
     public void TrueProcess(double delta)
     {
         RootLine.GrowBy((float) (GrowthModifier * delta));
-        Polygon2D.Polygon = Geometry2D.ConvexHull(RootLine.GetEndPoints().Append(RootLine.Start).ToArray());
+        (Shape2D.Shape as ConvexPolygonShape2D).SetPointCloud(RootLine.GetEndPoints().Append(RootLine.Start).ToArray());
+        //Polygon2D.Disabled = true;
+        //CallDeferred(MethodName.EnablePolygon);
         QueueRedraw();
     }
 
+    // public void EnablePolygon()
+    // {
+    //     Polygon2D.Disabled = false;
+    // }
     public void AffectHero(double delta)
     {
+        HeroTouchedThisProcess = true;
     }
 
-    public void AffectEnemies(double delta)
-    {
-        affectedEnemies.RemoveAll(enemy => enemy == null);
-        affectedEnemies.ForEach(enemy => { }
-        );
-    }
 
     public void _on_root_area_body_entered(Node2D node)
     {
@@ -125,7 +129,8 @@ public partial class RootRoot : Node2D
         }
         else
         {
-            affectedEnemies.Add(enemy);
+            if (!enemy.IsInfected())
+                enemy.GetInfected();
         }
     }
 
@@ -141,7 +146,6 @@ public partial class RootRoot : Node2D
         }
         else
         {
-            affectedEnemies.Remove(enemy);
         }
     }
 
@@ -152,11 +156,13 @@ public partial class RootRoot : Node2D
     public void Reset()
     {
         Visible = true;
+        Shape2D.Disabled = false;
         
+        affectedHero = null;
         RootLine = new RootLine(
             Vector2.Zero, 
             Vector2.FromAngle(Random.Shared.NextSingle() * (float) Math.PI * 2), GrowthLimit, WidenessFactor,
-            LongnessFactor, EgoismFactor, CreationEgoismFactor, MaxOffspring, StartColor, EndColor);
+            LongnessFactor, EgoismFactor, CreationEgoismFactor, MaxOffspring, StartColor, EndColor,RootHealth);
         QueueRedraw();
     }
 }
@@ -174,12 +180,17 @@ public class RootController
     public void Process(double delta)
     {
         this.delta = delta;
-        for (var _ = 0; _ < RootsPerProcess; ++_)
+        var maxRootsToProcess = RootRoot.AllRoots.Count(root => root.Visible);
+        
+        for (var i = 0; i < Math.Min(maxRootsToProcess,RootsPerProcess); ++i)
         {
             RootPtr = (RootPtr + 1) % RootRoot.AllRoots.Count;
             var chosenRoot = RootRoot.AllRoots[RootPtr];
-            if (!chosenRoot.Visible)
+            if (!chosenRoot.Visible )
+            {
+                --i;
                 continue;
+            }
             RootRoot.AllRoots[RootPtr].TrueProcess(delta * RootRoot.AllRoots.Count / RootsPerProcess);
         }
     }
@@ -217,9 +228,11 @@ public class RootLine
     public Vector2 Start;
     public Color StartColor, EndColor;
     private bool IsDead = false;
+    private float Health;
     private RootLine parent;
+    private int LastSwingWithDamage = -1;
     public RootLine(Vector2 start, Vector2 direction, float growthLimit, float widenessFactor, float longnessFactor,
-        float egoismFactor, float creationEgoismFactor, int maxOffsprings, Color startColor, Color endColor, RootLine parent = null)
+        float egoismFactor, float creationEgoismFactor, int maxOffsprings, Color startColor, Color endColor,float rootHealth, RootLine parent = null)
     {
         StartColor = startColor;
         EndColor = endColor;
@@ -236,6 +249,7 @@ public class RootLine
         color = StartColor;
         CreationEgoismFactor = creationEgoismFactor;
         this.parent = parent;
+        this.Health = rootHealth;
         CalculatePolygon();
     }
 
@@ -280,7 +294,7 @@ public class RootLine
             rotation = Math.PI * 2 + rotation;
         Offsprings.Add(new RootLine(GetRandomOffspringPoint(),
             Direction.Rotated((float) rotation).Normalized(), GrowthLimit, WidenessFactor,
-            LongnessFactor, EgoismFactor, CreationEgoismFactor, MaxOffsprings - 1, StartColor, EndColor,this));
+            LongnessFactor, EgoismFactor, CreationEgoismFactor, MaxOffsprings - 1, StartColor, EndColor,Health,this));
     }
 
     public RootLine GetRandomOffspring()
@@ -386,14 +400,27 @@ public class RootLine
         return Offsprings.SelectMany(offspring => offspring.GetEndPoints()).Append(End);
     }
 
-    public bool GetCutByLine(Vector2 startLocal, Vector2 endLocal)
+    public bool GetCutByLine(Vector2 startLocal, Vector2 endLocal, double damage)
     {
-        var ans = Geometry2D.SegmentIntersectsSegment(startLocal, endLocal, Start, End).As<Vector2>();
-        if (ans.IsEqualApprox(Vector2.Zero))
+        bool diesThisSwing = false;
+        if (Hero.Instance().SwingCount != LastSwingWithDamage)
+        {
+            var ans = Geometry2D.SegmentIntersectsSegment(startLocal, endLocal, Start, End).As<Vector2>();
+            if (!ans.IsEqualApprox(Vector2.Zero))
+            {
+                LastSwingWithDamage = Hero.Instance().SwingCount;
+                Health -= (float)damage;
+                if (Health <= 0)
+                {
+                    diesThisSwing = true;
+                }
+            }
+        }
+        if (!diesThisSwing)
         {
             foreach (var rootLine in Offsprings)
             {
-                rootLine.GetCutByLine(startLocal,endLocal);
+                rootLine.GetCutByLine(startLocal,endLocal,damage);
             }
 
             Offsprings.RemoveAll(offspring => offspring.IsDead);
@@ -402,6 +429,7 @@ public class RootLine
         {
             if (parent == null)
             {
+                // No parent to delegate death handling to, assuming we are the root of the roots.
                 return true;
             }
             else

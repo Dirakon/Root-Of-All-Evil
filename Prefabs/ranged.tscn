@@ -1,14 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://dwkhfe8kpoyp"]
+[gd_scene load_steps=5 format=3 uid="uid://dwkhfe8kpoyp"]
 
 [ext_resource type="Script" path="res://Scripts/Enemy.cs" id="1_5gvp6"]
 [ext_resource type="Texture2D" uid="uid://dan8m0pcwy7y2" path="res://Sprites/enemyArcher.png" id="2_1vh1k"]
+[ext_resource type="PackedScene" uid="uid://mn0dxue6l5t1" path="res://Prefabs/infectedRanged.tscn" id="2_cxeah"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vnp73"]
 radius = 76.1052
 
 [node name="Enemy" type="CharacterBody2D"]
 position = Vector2(0, 15)
-collision_layer = 10
+collision_layer = 42
 collision_mask = 5
 script = ExtResource("1_5gvp6")
 AppliedToSelfKnockbackModifer = 0.2
@@ -20,6 +21,7 @@ knockBackToDampFactor = 0.95
 SelfScale = Vector2(0.2, 0.2)
 Speed = 20.0
 Acceleraion = 5.0
+InfectedVersion = ExtResource("2_cxeah")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.57079

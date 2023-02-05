@@ -5,6 +5,7 @@ public partial class Hero : CharacterBody2D
 {
     private static Hero instance;
 
+    public int SwingCount = 0; 
     private AnimationPlayer AnimationPlayer;
     private Vector2 AppliedKnockback = Vector2.Zero;
 
@@ -14,6 +15,7 @@ public partial class Hero : CharacterBody2D
     private bool OnCooldown;
     private Vector2 OriginalSwordReach;
     [Export] private Vector2 SelfScale;
+    [Export] private float SpeedDebuffFromRoot, DamageFromRoots;
     [Export] public float Speed, Cooldown, Damage, KnockbackStrength, SpeedUpgradeAmount, KnockbackUpgradeAmount;
     private Node2D sword;
     private CollisionShape2D swordCollision;
@@ -51,15 +53,16 @@ public partial class Hero : CharacterBody2D
             );
     }
 
+    private RootRoot rootToCut;
     public void _on_area_entered(Area2D area)
     {
         if (area.Name.ToString().StartsWith("Root"))
         {
-            var RootToCut = area.GetParent() as RootRoot;
-            RootToCut.GetCutByLine(GetSwordAsLine());
+            rootToCut = area.GetParent() as RootRoot;
         }
         else
         {
+            // Cutting projectiles
             area.QueueFree();
             
         }
@@ -67,7 +70,9 @@ public partial class Hero : CharacterBody2D
 
     public void _on_area_exited(Area2D area)
     {
-        var RootToCut = area.GetParent() as RootRoot;
+        var thisAsRoot = area.GetParent() as RootRoot;
+        if (thisAsRoot == rootToCut)
+            rootToCut = null;
     }
 
     public override void _Ready()
@@ -84,12 +89,34 @@ public partial class Hero : CharacterBody2D
     {
         QueueRedraw();
         var IsAttacking = AnimationPlayer.IsPlaying();
+        if (rootToCut != null)
+        {
+            if (swordCollision.Disabled)
+            {
+                rootToCut = null;
+            }
+            else if (!rootToCut.Visible)
+            {
+                rootToCut = null;
+            }
+            else
+            {
+                
+                rootToCut.GetCutByLine(GetSwordAsLine(), Damage);
+            }
+        }
         // GD.Print(GetGlobalMousePosition());
         // GD.Print(GetViewport().GetFinalTransform().BasisXformInv(GetGlobalMousePosition()));
         if (!IsAttacking)
             LookAt(Main3D.SupposedMousePosition);
         Velocity = new Vector2(Input.GetAxis("left", "right"), -Input.GetAxis("down", "forward")).Normalized() * Speed +
                    AppliedKnockback;
+        if (RootRoot.HeroTouchedThisProcess)
+        {
+            RootRoot.HeroTouchedThisProcess = false;
+            Velocity *= SpeedDebuffFromRoot;
+            TakeDamage(delta*DamageFromRoots,Vector2.Zero);
+        }
         MoveAndSlide();
 
         var knockbackDampingFactor = knockBackToDampFactor * delta;
@@ -98,7 +125,15 @@ public partial class Hero : CharacterBody2D
         AppliedKnockback *= 1 - (float) knockbackDampingFactor;
 
 
-        if (!OnCooldown && Input.IsMouseButtonPressed(MouseButton.Left) && !IsAttacking) AnimationPlayer.Play("Attack");
+        if (!OnCooldown && Input.IsMouseButtonPressed(MouseButton.Left) && !IsAttacking) {
+            AnimationPlayer.Play("Attack");
+            SwingCount++;
+        }
+    }
+
+    public bool IntersectsWithPolygon(Vector2[] polygon)
+    {
+        return false;
     }
 
     public void _on_animation_player_animation_finished(string name)

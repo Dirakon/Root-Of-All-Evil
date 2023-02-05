@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://g5jbkpk6vwvw"]
+[gd_scene load_steps=14 format=3 uid="uid://g5jbkpk6vwvw"]
 
 [ext_resource type="Script" path="res://Scripts/MainArcade.cs" id="1_d70wt"]
 [ext_resource type="PackedScene" uid="uid://cgqxvrcwtm8op" path="res://Prefabs/hero.tscn" id="1_n8d71"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://cnjhuoy4jyatn" path="res://Prefabs/infectedProjectile.tscn" id="4_uds1s"]
 [ext_resource type="PackedScene" uid="uid://bopbxdohhh756" path="res://Prefabs/ui.tscn" id="5_1qv8g"]
 [ext_resource type="PackedScene" uid="uid://csl0wwmclix7q" path="res://Prefabs/projectile.tscn" id="7_6s8f6"]
+[ext_resource type="PackedScene" uid="uid://cc1momghins32" path="res://Prefabs/melee.tscn" id="7_hp0pe"]
 [ext_resource type="PackedScene" uid="uid://mn0dxue6l5t1" path="res://Prefabs/infectedRanged.tscn" id="7_jwugf"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_a2rqt"]
@@ -82,4 +83,11 @@ position = Vector2(500, 500)
 position = Vector2(280, 187)
 
 [node name="Enemy" parent="." instance=ExtResource("7_jwugf")]
-position = Vector2(559, 314)
+position = Vector2(338, 310)
+
+[node name="RootRoot" parent="." instance=ExtResource("3_c26kr")]
+position = Vector2(211, 359)
+rotation = -0.0246236
+
+[node name="Enemy2" parent="." instance=ExtResource("7_hp0pe")]
+position = Vector2(170, 318)

@@ -83,13 +83,15 @@ _data = {
 }
 
 [node name="Hero" type="CharacterBody2D"]
-collision_layer = 17
+collision_layer = 49
 collision_mask = 6
 script = ExtResource("1_84iow")
 Health = 3.0
 MaxHealth = 3.0
 knockBackToDampFactor = 0.95
 SelfScale = Vector2(0.2, 0.2)
+SpeedDebuffFromRoot = 0.25
+DamageFromRoots = 0.7
 Speed = 200.0
 Cooldown = 0.9
 Damage = 1.0
@@ -110,6 +112,7 @@ visible = false
 
 [node name="Sword" type="Area2D" parent="Attack"]
 position = Vector2(67, 56)
+scale = Vector2(2, 2)
 collision_layer = 0
 collision_mask = 8
 

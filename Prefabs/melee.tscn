@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://cc1momghins32"]
+[gd_scene load_steps=5 format=3 uid="uid://cc1momghins32"]
 
 [ext_resource type="Script" path="res://Scripts/Enemy.cs" id="1_ytjbw"]
+[ext_resource type="PackedScene" uid="uid://b5n3eqsv65vyt" path="res://Prefabs/infected_melee.tscn" id="2_ucf51"]
 [ext_resource type="Texture2D" uid="uid://c8lw3fqyeryao" path="res://Sprites/enemy.png" id="2_w8utt"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vnp73"]
@@ -8,7 +9,7 @@ radius = 76.1052
 
 [node name="Enemy" type="CharacterBody2D"]
 position = Vector2(0, 15)
-collision_layer = 10
+collision_layer = 42
 collision_mask = 5
 script = ExtResource("1_ytjbw")
 AppliedToSelfKnockbackModifer = 1.0
@@ -20,6 +21,7 @@ knockBackToDampFactor = 0.95
 SelfScale = Vector2(0.2, 0.2)
 Speed = 100.0
 Acceleraion = 5.0
+InfectedVersion = ExtResource("2_ucf51")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.390955, 0.390955)

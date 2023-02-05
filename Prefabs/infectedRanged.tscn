@@ -8,10 +8,10 @@ radius = 76.1052
 
 [node name="Enemy" type="CharacterBody2D"]
 position = Vector2(0, 15)
-collision_layer = 10
+collision_layer = 42
 collision_mask = 5
 script = ExtResource("1_coaav")
-AppliedToSelfKnockbackModifer = 1.0
+AppliedToSelfKnockbackModifer = 0.2
 Damage = 1.0
 EnemyTypeId = "infectedRanged"
 Health = 4.0

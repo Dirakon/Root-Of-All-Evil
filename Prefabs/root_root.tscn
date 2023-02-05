@@ -5,18 +5,19 @@
 [node name="RootRoot" type="Node2D"]
 script = ExtResource("1_owtja")
 GrowthLimit = 75.0
-WidenessFactor = 0.07
+WidenessFactor = 0.05
 LongnessFactor = 1.0
 GrowthModifier = 20.0
 TimerRandomnessModifier = 1.0
 EgoismFactor = 0.05
 CreationEgoismFactor = 0.8
+RootHealth = 2.0
 MaxOffspring = 4
 StartColor = Color(0.662745, 0.701961, 0.141176, 1)
 
 [node name="RootArea" type="Area2D" parent="."]
 collision_layer = 8
-collision_mask = 0
+collision_mask = 32
 
 [connection signal="area_entered" from="RootArea" to="." method="_on_area_entered"]
 [connection signal="body_entered" from="RootArea" to="." method="_on_root_area_body_entered"]
