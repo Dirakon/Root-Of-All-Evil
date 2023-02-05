@@ -47,6 +47,7 @@ public partial class MainArcade : Node2D
             GD.PrintErr("Trying to choose upgrade during incorrect game state");
             return;
         }
+        SoundManager.Play("upgrade");
 
 
         currentState.UpgradesStations.ForEach(station => station.QueueFree());
@@ -70,9 +71,17 @@ public partial class MainArcade : Node2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
+        Init();
+    }
+
+    private void Init()
+    {
+        
         var hero = heroPrefab.Instantiate() as Node2D;
         hero.GlobalPosition = StartHeroPosition;
         AddChild(hero);
+        
+        
         var worldBoundaries = Enumerable.Range(1, 4).Select(index => GetNode($"Wall{index}") as Node2D)
             .Select(node => node.GlobalPosition).ToList();
 
@@ -81,11 +90,10 @@ public partial class MainArcade : Node2D
             minPosition[i] = worldBoundaries.MinBy(position => position[i])[i];
             maxPosition[i] = worldBoundaries.MaxBy(position => position[i])[i];
         }
-
+        
         StartNextWave();
     }
-
-
+    
     public Vector2 ChooseSpawnPosition(List<Vector2> positionsToAvoid = null)
     {
         positionsToAvoid ??= new List<Vector2>();
@@ -106,6 +114,7 @@ public partial class MainArcade : Node2D
     public void SpawnEnemy(PackedScene enemyPrefab)
     {
         var enemy = enemyPrefab.Instantiate() as Enemy;
+        enemy.Init();
         enemy.GlobalPosition = ChooseSpawnPosition();
         AddChild(enemy);
         EnemiesThisWave.Add(enemy);
@@ -160,6 +169,8 @@ public partial class MainArcade : Node2D
             List<Vector2> upgradePositions = new();
             for (var i = 0; i < 3; ++i) upgradePositions.Add(ChooseSpawnPosition(new List<Vector2>(upgradePositions)));
 
+            SoundManager.Play("level_cleared");
+            
             state = new ArcadeChoosingUpgrades(
                 upgradePositions
                     .Zip(currentUpgrades)
@@ -175,6 +186,24 @@ public partial class MainArcade : Node2D
                     .ToList()
             );
         }
+    }
+
+    public void ResetGame()
+    {
+        InfectionValue = -10;
+        WaveCount = 4;
+        EnemiesThisWave = null;
+        state = null;
+        foreach (var child in GetChildren())
+        {
+            var lowerName = child.Name.ToString().ToLower();
+            if (lowerName.StartsWith("wall") || lowerName.StartsWith("ui") || lowerName.StartsWith("back"))
+                continue;
+            child.QueueFree();
+            
+        }
+
+        CallDeferred(MethodName.Init);
     }
 }
 

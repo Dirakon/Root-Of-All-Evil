@@ -68,8 +68,13 @@ public partial class RootRoot : Node2D
 
         if (RootLine.GetCutByLine(startLocal, endLocal, damage))
         {
-            Visible = false;
-            Shape2D.Disabled = true;
+            SoundManager.Play("cutting_roots");
+            if (RootLine.IsDead)
+            {
+                
+                Visible = false;
+                Shape2D.Disabled = true;
+            }
             //AllRoots.Remove(this);
             //QueueFree();    
         }
@@ -214,7 +219,7 @@ public class RootController
         {
             root.Reset();
         }
-
+        SoundManager.Play("root_appears");
         root.GlobalPosition = position;
     }
 }
@@ -228,7 +233,7 @@ public class RootLine
     public Vector2 End;
     public float Growth, GrowthLimit, WidenessFactor, LongnessFactor, EgoismFactor, CreationEgoismFactor;
     private float Health;
-    private bool IsDead;
+    public bool IsDead = false;
     private int LastSwingWithDamage = -1;
     private bool LimitReached;
     public int MaxOffsprings;
@@ -408,6 +413,7 @@ public class RootLine
 
     public bool GetCutByLine(Vector2 startLocal, Vector2 endLocal, double damage)
     {
+        bool gotAnyDamage = false;
         var diesThisSwing = false;
         if (Hero.Instance().SwingCount != LastSwingWithDamage)
         {
@@ -417,23 +423,24 @@ public class RootLine
                 LastSwingWithDamage = Hero.Instance().SwingCount;
                 Health -= (float) damage;
                 if (Health <= 0) diesThisSwing = true;
+                gotAnyDamage = true;
             }
         }
 
         if (!diesThisSwing)
         {
-            foreach (var rootLine in Offsprings) rootLine.GetCutByLine(startLocal, endLocal, damage);
+            foreach (var rootLine in Offsprings)
+                if (rootLine.GetCutByLine(startLocal, endLocal, damage))
+                    gotAnyDamage = true;
 
             Offsprings.RemoveAll(offspring => offspring.IsDead);
         }
         else
         {
-            if (parent == null)
-                // No parent to delegate death handling to, assuming we are the root of the roots.
-                return true;
             IsDead = true;
+            return true;
         }
 
-        return false;
+        return gotAnyDamage;
     }
 }

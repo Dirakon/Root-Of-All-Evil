@@ -1,7 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://bye81mr4mod6"]
+[gd_scene load_steps=16 format=3 uid="uid://bye81mr4mod6"]
 
 [ext_resource type="Script" path="res://Scripts/Main3D.cs" id="1_eb3u8"]
 [ext_resource type="PackedScene" uid="uid://g5jbkpk6vwvw" path="res://Prefabs/main_2d.tscn" id="2_kjfx7"]
+[ext_resource type="PackedScene" uid="uid://b3lwx4cqjjqnn" path="res://Models/arcade.glb" id="3_ulvk6"]
+[ext_resource type="PackedScene" uid="uid://bdsupqtco4yb8" path="res://Models/joystick.glb" id="4_88wag"]
+[ext_resource type="Script" path="res://Scripts/Joystick.cs" id="4_l8wsk"]
+[ext_resource type="AudioStream" uid="uid://c7f6pxtd4xqhe" path="res://Sounds/melee_attacks.wav" id="6_8wble"]
+[ext_resource type="Script" path="res://Scripts/SoundManager.cs" id="6_q2tx6"]
+[ext_resource type="AudioStream" uid="uid://brngfoswijk4c" path="res://Sounds/infection.wav" id="7_hjb1c"]
+[ext_resource type="AudioStream" uid="uid://daost6u3usekr" path="res://Sounds/infected_melee_attacks.wav" id="8_5hq1y"]
+[ext_resource type="AudioStream" uid="uid://cf7uy7jmr4gl2" path="res://Sounds/bg.wav" id="9_2nmku"]
+[ext_resource type="AudioStream" uid="uid://oxyny45t7amw" path="res://Sounds/infected_ranged_attacks.wav" id="10_b3m5i"]
+[ext_resource type="AudioStream" uid="uid://drnt6rr5xm3dq" path="res://Sounds/projectile_lands.wav" id="12_xvw6s"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wqmsn"]
 
@@ -15,15 +25,12 @@ plane = Plane(0, 0, 1, 0)
 script = ExtResource("1_eb3u8")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -4, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -6.87232, 0)
 
 [node name="ViewportQuad" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 5.09226, -5, -9.50919)
 material_override = SubResource("StandardMaterial3D_wqmsn")
 mesh = SubResource("PlaneMesh_hhjqd")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="ViewportQuad"]
-transform = Transform3D(1, 0, 0, 0, -0.272314, 0.962209, 0, -0.962209, -0.272314, 0, 3.78701, -1.65536e-07)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="ViewportQuad"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -5, 0, -5)
@@ -36,3 +43,64 @@ handle_input_locally = false
 render_target_update_mode = 4
 
 [node name="Main2D" parent="SubViewport" instance=ExtResource("2_kjfx7")]
+
+[node name="arcade" parent="." instance=ExtResource("3_ulvk6")]
+transform = Transform3D(1.99274, 0, 0, 0, 1.83826, 0, 0, 0, 1.96893, 5.07752, -10.8374, -14.2064)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="arcade"]
+transform = Transform3D(0.507889, 0.000966214, 0, -0.000966214, 0.507889, 0, 0, 0, 0.50789, 3.59946, 2.3654, 1.24124)
+omni_range = 15.1612
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="arcade"]
+transform = Transform3D(0.507886, 0.00193242, 0, -0.00193242, 0.507886, 0, 0, 0, 0.50789, -3.67689, 3.56328, 1.87165)
+omni_range = 15.1612
+
+[node name="OmniLight3D3" type="OmniLight3D" parent="arcade"]
+transform = Transform3D(0.507875, 0.00386482, 0, -0.00386482, 0.507875, 0, 0, 0, 0.50789, -0.89206, 6.67375, 1.08751)
+omni_range = 15.1612
+
+[node name="OmniLight3D4" type="OmniLight3D" parent="arcade"]
+transform = Transform3D(0.507875, 0.00386482, 0, -0.00386482, 0.507875, 0, 0, 0, 0.50789, 0.225624, -1.37288, 2.97242)
+omni_range = 15.1612
+
+[node name="Move" type="Node3D" parent="arcade"]
+transform = Transform3D(0.437217, 0, 0, 0, 0.410852, -0.149538, 0, 0.149538, 0.410852, -1.44751, 0.22533, 4.5123)
+script = ExtResource("4_l8wsk")
+speed = 1.0
+
+[node name="joystick" parent="arcade/Move" instance=ExtResource("4_88wag")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.15256e-07, 0, 0)
+
+[node name="Mouse" type="Node3D" parent="arcade"]
+transform = Transform3D(0.437217, 0, 0, 0, 0.410852, -0.149538, 0, 0.149538, 0.410852, 1.26532, 0.22533, 4.5123)
+visible = false
+script = ExtResource("4_l8wsk")
+speed = 1.0
+
+[node name="joystick" parent="arcade/Mouse" instance=ExtResource("4_88wag")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.15256e-07, 0, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 18.7037)
+
+[node name="SoundManager" type="Node3D" parent="."]
+script = ExtResource("6_q2tx6")
+
+[node name="bg" type="AudioStreamPlayer" parent="SoundManager"]
+stream = ExtResource("9_2nmku")
+autoplay = true
+
+[node name="melee_attacks" type="AudioStreamPlayer" parent="SoundManager"]
+stream = ExtResource("6_8wble")
+
+[node name="infection" type="AudioStreamPlayer" parent="SoundManager"]
+stream = ExtResource("7_hjb1c")
+
+[node name="infected_melee_attacks" type="AudioStreamPlayer" parent="SoundManager"]
+stream = ExtResource("8_5hq1y")
+
+[node name="infected_ranged_attacks" type="AudioStreamPlayer" parent="SoundManager"]
+stream = ExtResource("10_b3m5i")
+
+[node name="projectile_lands" type="AudioStreamPlayer" parent="SoundManager"]
+stream = ExtResource("12_xvw6s")

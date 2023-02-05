@@ -28,6 +28,7 @@ public partial class Projectile : Area2D
         {
             case Hero hero:
                 hero.TakeDamage(damage, Vector2.Zero);
+                SoundManager.Play("projectile_lands");
                 QueueFree();
                 break;
             default:

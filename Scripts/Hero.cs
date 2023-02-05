@@ -60,8 +60,11 @@ public partial class Hero : CharacterBody2D
         if (area.Name.ToString().StartsWith("Root"))
             rootToCut = area.GetParent() as RootRoot;
         else
+        {
             // Cutting projectiles
+            SoundManager.Play("projectile_cut");
             area.QueueFree();
+        }
     }
 
     public void _on_area_exited(Area2D area)
@@ -92,7 +95,9 @@ public partial class Hero : CharacterBody2D
             else if (!rootToCut.Visible)
                 rootToCut = null;
             else
+            {
                 rootToCut.GetCutByLine(GetSwordAsLine(), Damage);
+            }
         }
 
         // GD.Print(GetGlobalMousePosition());
@@ -103,6 +108,7 @@ public partial class Hero : CharacterBody2D
                    AppliedKnockback;
         if (RootRoot.HeroTouchedThisProcess)
         {
+            SoundManager.Play("stuck_in_roots");
             RootRoot.HeroTouchedThisProcess = false;
             Velocity *= SpeedDebuffFromRoot;
             TakeDamage(delta * DamageFromRoots, Vector2.Zero);
@@ -118,6 +124,7 @@ public partial class Hero : CharacterBody2D
 
         if (!OnCooldown && Input.IsMouseButtonPressed(MouseButton.Left) && !IsAttacking)
         {
+            SoundManager.Play("swing");
             AnimationPlayer.Play("Attack");
             SwingCount++;
         }
@@ -154,13 +161,17 @@ public partial class Hero : CharacterBody2D
             return;
         damagedEnemiesThisSwing.Add(enemy);
         enemy.TakeDamage(Damage, GlobalPosition.DirectionTo(enemy.GlobalPosition) * KnockbackStrength);
+        
     }
 
     public void TakeDamage(double damage, Vector2 knockback)
     {
         Health -= (float) damage;
         if (Health < 0)
+        {
             QueueFree();
+            MainArcade.Instance().ResetGame();
+        }
         else
             AppliedKnockback += knockback;
     }

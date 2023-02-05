@@ -32,8 +32,8 @@ heroPrefab = ExtResource("1_n8d71")
 InfectionValue = -10.0
 meleeEnemy = ExtResource("7_hp0pe")
 archerEnemy = ExtResource("3_ydtfu")
-RootPlantTimeInfectionFactor = 0.282
-MinRootPlantTime = 5.0
+RootPlantTimeInfectionFactor = 0.212
+MinRootPlantTime = 2.0
 StartHeroPosition = Vector2(200, 200)
 StartRootPlantTime = 30.0
 UninfectedProjectilePrefab = ExtResource("7_6s8f6")
@@ -42,7 +42,7 @@ RootPrefab = ExtResource("3_c26kr")
 upgradeStationPrefab = ExtResource("4_sbk7s")
 WaveCount = 4
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="background" type="ColorRect" parent="."]
 offset_left = -624.0
 offset_top = -404.0
 offset_right = -584.0
@@ -81,6 +81,3 @@ collision_mask = 0
 shape = SubResource("WorldBoundaryShape2D_kv6p0")
 
 [node name="UI" parent="." instance=ExtResource("5_1qv8g")]
-
-[node name="Projectile" parent="." instance=ExtResource("7_6s8f6")]
-position = Vector2(280, 187)

@@ -43,6 +43,7 @@ public partial class InfectedProjectile : Area2D
         RootRoot.AllRoots ??= new List<RootRoot>();
         RootRoot.AllRoots.RemoveAll(root => !IsInstanceValid(root));
         RootRoot.Controller.CreateNewRoot(GlobalPosition);
+        SoundManager.Play("projectile_lands");
         QueueFree();
     }
 

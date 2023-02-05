@@ -22,9 +22,13 @@ public partial class Enemy : CharacterBody2D
         return EnemyTypeId.ToLower().StartsWith("infected");
     }
 
-    public override void _Ready()
+    public void Init()
     {
         Scale = SelfScale;
+    }
+    public override void _Ready()
+    {
+        //Scale = SelfScale;
         _enemyType = EnemyTypeId.ToLower() switch
         {
             "melee" => new MeleeEnemy(),
@@ -77,10 +81,12 @@ public partial class Enemy : CharacterBody2D
     public void ActivateInfection()
     {
         QueueFree();
-        var evolution = InfectedVersion.Instantiate() as Node2D;
+        var evolution = InfectedVersion.Instantiate() as Enemy;
+        evolution.Init();
         evolution.GlobalPosition = GlobalPosition;
         MainArcade.Instance().EnemiesThisWave.Remove(this);
         MainArcade.Instance().AddChild(evolution);
+        SoundManager.Play("infection");
     }
     public void GetInfected()
     {
@@ -111,8 +117,12 @@ public class MeleeEnemy : EnemyType
     public override void CollideWith(GodotObject collider, double delta)
     {
         var hero = collider as Hero;
-        hero?.TakeDamage(delta * Enemy.Damage,
-            Enemy.GlobalPosition.DirectionTo(hero.GlobalPosition) * Enemy.KnockbackStrength);
+        if (hero != null)
+        {
+            hero.TakeDamage(delta * Enemy.Damage,
+                Enemy.GlobalPosition.DirectionTo(hero.GlobalPosition) * Enemy.KnockbackStrength);
+            SoundManager.Play("melee_attacks");
+        }
     }
 }
 
@@ -137,6 +147,7 @@ public class RangedEnemy : EnemyType
             projectile.GlobalPosition = Enemy.GlobalPosition;
             projectile.Init(Enemy.GlobalPosition.DirectionTo(Hero.Instance().GlobalPosition),
                 Hero.Instance().GlobalPosition);
+            SoundManager.Play("ranged_attacks");
         }
     }
 }
@@ -161,6 +172,7 @@ public class InfectedRangedEnemy : EnemyType
             Enemy.GetParent().AddChild(projectile);
             projectile.GlobalPosition = Enemy.GlobalPosition;
             projectile.Init(Hero.Instance().GlobalPosition);
+            SoundManager.Play("infected_ranged_attacks");
         }
     }
 }
@@ -174,6 +186,7 @@ public class InfectedMeleeEnemy : EnemyType
         switch (collider)
         {
             case Hero hero:
+                SoundManager.Play("infected_melee_attacks");
                 hero.TakeDamage(delta * Enemy.Damage,
                     Enemy.GlobalPosition.DirectionTo(hero.GlobalPosition) * Enemy.KnockbackStrength);
                 break;
